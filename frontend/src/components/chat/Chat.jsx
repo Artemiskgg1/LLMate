@@ -9,46 +9,31 @@ const Chat = () => {
   const [sentMessages, setSentMessages] = useState([]);
   const [botResponses, setBotResponses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
-  const maxRetries = 3; // Maximum number of retry attempts
 
   useEffect(() => {
-    // Function to initialize WebSocket connection
     const initWebSocket = () => {
       const ws = new WebSocket("ws://localhost:8000/chat");
       setWebsocket(ws);
 
-      ws.onopen = () => {
-        setRetryCount(0); // Reset retry count on successful connection
-      };
-
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        setBotResponses([...botResponses, data.result]);
+        setBotResponses([...botResponses, data.answer]);
         setIsLoading(false);
-      };
-
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        reconnectWebSocket();
       };
 
       ws.onclose = () => {
         console.log("WebSocket connection closed");
-        reconnectWebSocket();
       };
     };
 
-    // Initialize WebSocket connection
     initWebSocket();
 
-    // Cleanup function to close WebSocket connection
     return () => {
       if (websocket) {
         websocket.close();
       }
     };
-  }, [botResponses, retryCount]); // Retry when botResponses or retryCount changes
+  }, [botResponses]);
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
@@ -60,20 +45,6 @@ const Chat = () => {
       setSentMessages([...sentMessages, message]);
       setMessage("");
       setIsLoading(true);
-    }
-  };
-
-  const reconnectWebSocket = () => {
-    // Retry connecting to WebSocket with exponential backoff
-    const retryDelay = Math.min(1000 * Math.pow(2, retryCount), 30000); // Exponential backoff with maximum delay of 30 seconds
-    if (retryCount < maxRetries) {
-      setTimeout(() => {
-        setRetryCount(retryCount + 1);
-      }, retryDelay);
-    } else {
-      console.error(
-        "Exceeded maximum retry attempts. Please refresh the page."
-      );
     }
   };
 
@@ -95,16 +66,14 @@ const Chat = () => {
             className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
           />
         </div>
-        {/* Display sent messages */}
         {sentMessages.map((msg, index) => (
           <ChatUser key={index} message={msg} />
         ))}
-        {/* Display bot responses or spinner */}
         {isLoading ? (
           <div className="text-center mt-4">Loading...</div>
         ) : (
           botResponses.map((response, index) => (
-            <ChatBot key={index} message={response.result} />
+            <ChatBot key={index} message={response} />
           ))
         )}
       </div>

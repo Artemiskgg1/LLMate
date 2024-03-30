@@ -6,7 +6,6 @@ import os
 import PyPDF2
 from langchain.text_splitter import CharacterTextSplitter
 from typing import List
-# from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain.embeddings.huggingface import HuggingFaceInstructEmbeddings
 from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
@@ -21,7 +20,6 @@ load_dotenv()
 
 app = FastAPI()
 
-# inference_api_key = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -55,7 +53,6 @@ def get_text_chunks(text):
     return chunks
 
 def get_vectorstore(text_chunks):
-    # model = SentenceTransformer('hkunlp/instructor-xl')
     model_kwargs = {'device': 'cpu'} 
     encode_kwargs = {'normalize_embeddings': True}
     embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl",model_kwargs=model_kwargs,encode_kwargs=encode_kwargs) 
@@ -77,6 +74,7 @@ def handle_userinput(user_question):
         raise HTTPException(status_code=500, detail="Conversation chain not initialized")
     
     response = conversation_chain({'question': user_question})
+    print(response)
     if 'result' in response:
         result = response['result']
     else:
