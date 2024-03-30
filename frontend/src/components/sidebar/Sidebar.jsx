@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   const handleFileUpload = () => {
     if (selectedFile) {
-      setLoading(true); // Set loading to true when starting file upload
+      setLoading(true); 
       const formData = new FormData();
       formData.append("file", selectedFile);
       fetch("http://localhost:8000/predict", {
@@ -33,7 +33,7 @@ const Sidebar = () => {
           toast.error("Error processing file!");
         })
         .finally(() => {
-          setLoading(false); // Set loading back to false regardless of success or failure
+          setLoading(false); 
         });
     } else {
       console.log("No file selected");

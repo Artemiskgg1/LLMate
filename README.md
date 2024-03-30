@@ -1,71 +1,77 @@
-# ProtonDatalabs AI developer Assignment - Chatbot application
+# LLMate
 
-## Preface
+## Introduction
 
-At ProtonDatalabs, we leverage cutting-age gen-AI solutions to deliver buisness value to our clients. We are able to do this by combining aspects from AI modelling to full-stack developement.
+PDF Chatbot is a project aimed at assisting users in extracting information from PDF files using a chatbot interface. This project utilizes React for the frontend and FastAPI for the backend. Additionally, it leverages free Large Language Models (LLMs) from Hugging Face to enhance natural language understanding.
 
-In this assignment, your task is to build a chatbot application which takes a file as an input and answers user's query. The goal of this application is to accurately provide answers based on the uploaded file. This application could be used as an assistant to quickly answer questions or summarize facts from files containing large amounts of text data, making our lives easier.
+## Features
 
-## Project structure
+- Upload PDF files
+- Extract information from uploaded PDF files
+- Chatbot interface for interacting with the system
+- Utilizes state-of-the-art language models for enhanced understanding
 
-In this project you find 2 directories
+## Installation
 
-1. `backend` containing the server side **python** code
-2. `frontend` containing the client side **typescript** code.\
-   In both these directories, it is your job to complete the missing modules and add necessary functionalities to make the app fully functional.
+1. Clone the repository:
 
-### Backend
+```bash
+git clone <repository_url>
+```
 
-**Requirements**: Python 3.10 or above. We will test your submission against Python 3.10.
+2. Create a virtual environment using conda:
 
-1. `main.py` which is the entry point to our server
-2. This project has a few Python packages as dependencies, you can install them in your virtual environment using `requirements.txt`. If you were to use other dependencies, then please add them to `requirements.txt`.
-3. We will be using [`conda`](https://docs.conda.io/projects/conda/en/stable/) package manager to create a virtual environment `chatbot` using `conda create -n chatbot python=3.10` and then `conda activate chatbot` to activate the environment.
-4. Then install the python packages using `pip install -r requirements.txt`
+```
+conda create --name chatbot
+```
 
-#### Running the backend server
+3. Activate the virtual environment:
 
-To launch the server, navigate to the `backend` directory and run:
+```
+conda activate chatbot
+```
 
-##### `uvicorn main:app --reload`
+4. Install the dependencies from the requirements.txt file:
 
-This will start the server at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+```
+pip install -r requirements.txt
+```
 
-### Frontend
+## Running the Backend Server
 
-The project structure within the `frontend` directory follows the official `create-react-app` structure as in the [docs](https://create-react-app.dev/docs/folder-structure). Some of the files have been removed for convenience & brevity.
+1. Navigate to the backend directory:
 
-**Requirements**: We are using `node V20.11.1` and `npm 10.2.4`. They can be downloaded via [installer](https://nodejs.org/en). For more information check [here](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+```
+cd backend
+```
 
-#### How to launch the react app
+2. Launch the backend server:
+   `uvicorn main:app --reload`
 
-1. Navigate to the `frontend` directory and run `npm install`
-2. Then you can run:
+The server will start at http://127.0.0.1:8000/.
 
-   ##### `npm start`
+## Running the frontend
 
-   This will launch the app in development mode.\
-   Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Navigate to the frontend directory and Install frontend dependencies:
 
-The page will reload if you make edits. You will also see any lint errors in the console.
+```
+npm install
+```
 
-## The assignment
+```
+npm run dev
+```
 
-### Backend
+## Usage
 
-1. Currently, the server returns `hello world!` everytime user makes a query, which needs to be changed. Modify the `/predict` endpoint to acheive this. You are free to use any architecture here: API based or open-source LLMs. The end goal in either case is to have a meaningful result based on the user query and uploaded file.
-2. Implement the storage and handling of the incoming files from the frontend. You can use any database management system like MongoDB or MySQL for this.
+1. Once both the backend server and frontend app are running, visit http://localhost:3000/ in your web browser.
+2. Upload your PDF files using the provided interface.
+   Interact with the chatbot to extract information from the uploaded PDF files.
 
-### Frontend
+## Contributing
 
-1. Add a pop up which notifies that the file has been uploaded properly.
-2. Extend the app's functionality to accept `.txt`,`.docx` & `.pdf` files in addition to `.csv` files.
-3. Add some styling to the bare bones app structure. You are free to use any popular CSS frameworks like Tailwind or UI libraries like Material or Chakra UI. Bonus points for creative and innovative designs.
+Contributions are welcome! Please feel free to submit pull requests or open issues for any improvements, bug fixes, or new features.
 
-## Note
+## License
 
-1. We expect that the app behaves similar to real world applications we interact with everyday. So think from the point of view of a user and handle all the possible edge cases which may occur while running the app. For instance, you can think of cases when the user has uploaded a very large file (>100mb) or a unsupported file type like video/mp3.
-2. **Important** We want you to uphold your best programming practices (SOLID, OOPs, type hints) for the completion of this assignment, as if your code would end up in production and interact with other software components. A robust solution which covers fewer points will be judged more favourably than a complete solution that cuts corners.
-3. We will check your assignment by doing a full run of your app with all possible edge cases and see how the results look. Please ensure the program is in a finished state so that we can execute even though you might not have
-   completed it in full.
-4. Finally, be sure to provide a `README` document detailing your approach to completing the assignment, including the decisions you took and the reasons behind them.
+This project is licensed under the MIT License.
