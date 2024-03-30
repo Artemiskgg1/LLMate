@@ -6,7 +6,8 @@ import os
 import PyPDF2
 from langchain.text_splitter import CharacterTextSplitter
 from typing import List
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+# from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain.embeddings.huggingface import HuggingFaceInstructEmbeddings
 from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
@@ -14,13 +15,13 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain_community.llms import HuggingFaceHub
 import websockets  
 import json 
+from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 
 app = FastAPI()
 
-inference_api_key = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-
+# inference_api_key = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -54,7 +55,10 @@ def get_text_chunks(text):
     return chunks
 
 def get_vectorstore(text_chunks):
-    embeddings = HuggingFaceInferenceAPIEmbeddings(api_key=inference_api_key, model_name="hkunlp/instructor-xl")
+    # model = SentenceTransformer('hkunlp/instructor-xl')
+    model_kwargs = {'device': 'cpu'} 
+    encode_kwargs = {'normalize_embeddings': True}
+    embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl",model_kwargs=model_kwargs,encode_kwargs=encode_kwargs) 
     vectorstore = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vectorstore
 
@@ -73,18 +77,19 @@ def handle_userinput(user_question):
         raise HTTPException(status_code=500, detail="Conversation chain not initialized")
     
     response = conversation_chain({'question': user_question})
-
-    result = response.get('result', None) 
-    
-    try:
-        json.dumps(result)
-    except TypeError:
-        result = str(result)
+    if 'result' in response:
+        result = response['result']
+    else:
+        result = None
+    if result is not None:
+        try:
+            result = json.dumps(result)
+        except TypeError:
+            result = str(result)
+    else:
+        result = "No result available"
     response_data = {"result": result}
-    
     return response_data
-
-
 @app.post("/predict", response_model=Response)
 async def predict(file: UploadFile = File(...)):
     global conversation_chain
@@ -99,6 +104,7 @@ async def predict(file: UploadFile = File(...)):
     conversation_chain = get_conversation_chain(vectorstore)
     os.remove(file.filename)    
     return {"result": text_chunks}
+    
 @app.websocket("/chat")
 async def chat_endpoint(websocket: WebSocket):
     try:
